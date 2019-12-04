@@ -11,6 +11,14 @@ class Event(CCTArtGalleryModel):
 
     artpieces = models.ManyToManyField('art_pieces.ArtPiece', related_name='events')
 
+    slug_name = models.SlugField(
+        'slug name',
+        unique=True,
+        error_messages={
+            'unique': 'An event with this slug name already exists.'
+        }
+    )
+
     name = models.CharField(
         'event name',
         max_length=150
@@ -31,7 +39,7 @@ class Event(CCTArtGalleryModel):
 
     photo = models.ImageField(
         'event banner',
-        upload_to='events/pictures/',
+        upload_to='img/events/pictures/',
         blank=True,
         null=True
     )

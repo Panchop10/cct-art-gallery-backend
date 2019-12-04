@@ -9,6 +9,14 @@ from cct_art_gallery_api.utils.models import CCTArtGalleryModel
 class Category(CCTArtGalleryModel):
     """Category model."""
 
+    slug_name = models.SlugField(
+        'slug name',
+        unique=True,
+        error_messages={
+            'unique': 'A category with this slug name already exists.'
+        }
+    )
+
     name = models.CharField(
         'category name',
         max_length=50
@@ -16,7 +24,7 @@ class Category(CCTArtGalleryModel):
 
     photo = models.ImageField(
         'category photo',
-        upload_to='category/pictures/',
+        upload_to='img/categories/pictures/',
         blank=True,
         null=True
     )

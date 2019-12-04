@@ -9,6 +9,14 @@ from cct_art_gallery_api.utils.models import CCTArtGalleryModel
 class Artist(CCTArtGalleryModel):
     """Artist model."""
 
+    slug_name = models.SlugField(
+        'slug name',
+        unique=True,
+        error_messages={
+            'unique': 'An artist with this slug name already exists.'
+        }
+    )
+
     first_name = models.CharField(
         'artist first name',
         max_length=30
@@ -44,7 +52,7 @@ class Artist(CCTArtGalleryModel):
 
     photo = models.ImageField(
         'profile picture',
-        upload_to='artists/pictures/',
+        upload_to='img/artists/pictures/',
         blank=True,
         null=True
     )

@@ -34,6 +34,14 @@ class ArtPiece(CCTArtGalleryModel):
         null=True
     )
 
+    slug_name = models.SlugField(
+        'slug name',
+        unique=True,
+        error_messages={
+            'unique': 'An art piece with this slug name already exists.'
+        }
+    )
+
     name = models.CharField(
         'art piece name',
         max_length=150
@@ -49,7 +57,7 @@ class ArtPiece(CCTArtGalleryModel):
 
     photo = models.ImageField(
         'profile picture',
-        upload_to='artists/pictures/',
+        upload_to='img/art_pieces/pictures/',
         blank=True,
         null=True
     )

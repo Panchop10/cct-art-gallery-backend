@@ -33,7 +33,7 @@ class User(CCTArtGalleryModel, AbstractUser):
 
     photo = models.ImageField(
         'profile picture',
-        upload_to='users/pictures/',
+        upload_to='img/users/pictures/',
         blank=True,
         null=True
     )
