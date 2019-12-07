@@ -21,6 +21,19 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Apps
-    path('', include(('cctart.artists.urls', 'artists'), namespace='artists')),
+    path(
+        '',
+        include(
+            ('cctart.artists.urls', 'artists'),
+            namespace='artists'
+        )
+    ),
+    path(
+        '',
+        include(
+            ('cctart.categories.urls', 'categories'),
+            namespace='categories'
+        )
+    ),
 
 ]

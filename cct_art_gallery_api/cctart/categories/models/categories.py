@@ -5,17 +5,12 @@ from django.db import models
 
 # Utilities
 from cctart.utils.models import CCTArtGalleryModel
+from django_extensions.db.fields import AutoSlugField
 
 class Category(CCTArtGalleryModel):
     """Category model."""
 
-    slug_name = models.SlugField(
-        'slug name',
-        unique=True,
-        error_messages={
-            'unique': 'A category with this slug name already exists.'
-        }
-    )
+    slug_name = AutoSlugField(populate_from='name')
 
     name = models.CharField(
         'category name',
@@ -29,8 +24,8 @@ class Category(CCTArtGalleryModel):
         null=True
     )
 
-    active = models.BooleanField(
-        default=False,
+    is_active = models.BooleanField(
+        default=True,
         help_text=(
             'Tell us if a category is active or not'
         )
@@ -39,3 +34,6 @@ class Category(CCTArtGalleryModel):
     def __str__(self):
         """Return name of the category"""
         return self.name
+
+    class Meta:
+        verbose_name_plural = "Categories"
