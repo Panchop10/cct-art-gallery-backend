@@ -35,5 +35,12 @@ urlpatterns = [
             namespace='categories'
         )
     ),
+    path(
+        '',
+        include(
+            ('cctart.art_pieces.urls', 'art-pieces'),
+            namespace='art-pieces'
+        )
+    ),
 
 ]

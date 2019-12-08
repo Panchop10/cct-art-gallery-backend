@@ -5,6 +5,8 @@ from django.db import models
 
 # Utilities
 from cctart.utils.models import CCTArtGalleryModel
+from django_extensions.db.fields import AutoSlugField
+
 
 class ArtPiece(CCTArtGalleryModel):
     """ArtPiece model."""
@@ -34,12 +36,8 @@ class ArtPiece(CCTArtGalleryModel):
         null=True
     )
 
-    slug_name = models.SlugField(
-        'slug name',
-        unique=True,
-        error_messages={
-            'unique': 'An art piece with this slug name already exists.'
-        }
+    slug_name = AutoSlugField(
+        populate_from='name'
     )
 
     name = models.CharField(
@@ -62,7 +60,7 @@ class ArtPiece(CCTArtGalleryModel):
         null=True
     )
 
-    status = models.BooleanField(
+    deleted = models.BooleanField(
         'deleted',
         default=False,
         help_text=(
