@@ -18,3 +18,5 @@ class ArtPieceDetailModelSerializer(serializers.ModelSerializer):
             'name',
             'detail'
         )
+
+        read_only_fields = ('id',)

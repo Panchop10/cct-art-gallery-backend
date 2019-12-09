@@ -11,7 +11,7 @@ class ArtPieceTag(CCTArtGalleryModel):
 
     art_piece = models.ForeignKey(
         'art_pieces.ArtPiece',
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='tags',
     )
 

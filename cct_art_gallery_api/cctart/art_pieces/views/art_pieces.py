@@ -3,16 +3,23 @@
 # Django REST Framework
 from rest_framework import viewsets, mixins, status
 from rest_framework.response import Response
+from rest_framework.generics import get_object_or_404
 
 # Serializers
 from cctart.art_pieces.serializers import (
     ArtPieceModelSerializer,
     AddArtPieceModelSerializer,
-    UpdateArtPieceModelSerializer
+    UpdateArtPieceModelSerializer,
+    ArtPieceDetailModelSerializer,
+    ArtPieceTagModelSerializer,
 )
 
 # Models
-from cctart.art_pieces.models import ArtPiece
+from cctart.art_pieces.models import (
+    ArtPiece,
+    ArtPieceDetail,
+    ArtPieceTag
+)
 
 class ArtPieceViewSet(mixins.CreateModelMixin,
                     mixins.RetrieveModelMixin,
@@ -63,3 +70,52 @@ class ArtPieceViewSet(mixins.CreateModelMixin,
 
         data = self.get_serializer(artpiece).data
         return Response(data, status=status.HTTP_200_OK)
+
+
+class ArtPieceTagViewSet(
+                    mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    mixins.ListModelMixin,
+                    mixins.DestroyModelMixin,
+                    viewsets.GenericViewSet):
+    """Art Pieces Tag view set."""
+
+    serializer_class = ArtPieceTagModelSerializer
+
+    def dispatch(self, request, *args, **kwargs):
+        """Verify that the art piece exists."""
+        slug_name = kwargs['slug_name']
+        self.art_piece = get_object_or_404(
+            ArtPiece,
+            slug_name=slug_name
+        )
+        return super(ArtPieceTagViewSet, self).dispatch(request, *args, **kwargs)
+
+
+    def get_queryset(self):
+        """Restrict list to tags of the art piece given in the slug name"""
+        return ArtPieceTag.objects.filter(art_piece=self.art_piece)
+
+class ArtPieceDetailViewSet(
+                    mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    mixins.ListModelMixin,
+                    mixins.DestroyModelMixin,
+                    viewsets.GenericViewSet):
+    """Art Pieces Detail view set."""
+
+    serializer_class = ArtPieceDetailModelSerializer
+
+    def dispatch(self, request, *args, **kwargs):
+        """Verify that the art piece exists."""
+        slug_name = kwargs['slug_name']
+        self.art_piece = get_object_or_404(
+            ArtPiece,
+            slug_name=slug_name
+        )
+        return super(ArtPieceDetailViewSet, self).dispatch(request, *args, **kwargs)
+
+
+    def get_queryset(self):
+        """Restrict list to details of the art piece given in the slug name."""
+        return ArtPieceDetail.objects.filter(art_piece=self.art_piece)
