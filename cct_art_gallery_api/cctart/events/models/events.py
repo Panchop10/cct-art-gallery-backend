@@ -5,19 +5,14 @@ from django.db import models
 
 # Utilities
 from cctart.utils.models import CCTArtGalleryModel
+from django_extensions.db.fields import AutoSlugField
 
 class Event(CCTArtGalleryModel):
     """Event model."""
 
     artpieces = models.ManyToManyField('art_pieces.ArtPiece', related_name='events')
 
-    slug_name = models.SlugField(
-        'slug name',
-        unique=True,
-        error_messages={
-            'unique': 'An event with this slug name already exists.'
-        }
-    )
+    slug_name = AutoSlugField(populate_from='name')
 
     name = models.CharField(
         'event name',
@@ -48,6 +43,13 @@ class Event(CCTArtGalleryModel):
         default=False,
         help_text=(
             'Tell us if a event is finished or not'
+        )
+    )
+
+    deleted = models.BooleanField(
+        default=False,
+        help_text=(
+            'Tell us if a event was deleted or not'
         )
     )
 

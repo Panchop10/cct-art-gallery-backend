@@ -46,7 +46,7 @@ class ArtPieceViewSet(mixins.CreateModelMixin,
         instance.save()
 
     def create(self, request, *args, **kwargs):
-        """Handle member creation from invitation code."""
+        """Handle art pieces creation with details and tags."""
         serializer = AddArtPieceModelSerializer(
             data=request.data,
             context={'request': request}
@@ -58,6 +58,7 @@ class ArtPieceViewSet(mixins.CreateModelMixin,
         return Response(data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
+        """Handle update artpiece and add details and tags"""
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = UpdateArtPieceModelSerializer(

@@ -42,5 +42,12 @@ urlpatterns = [
             namespace='art-pieces'
         )
     ),
+    path(
+        '',
+        include(
+            ('cctart.events.urls', 'events'),
+            namespace='events'
+        )
+    ),
 
 ]

@@ -18,3 +18,5 @@ class CategoryModelSerializer(serializers.ModelSerializer):
             'name',
             'photo',
         )
+
+        read_only_fields = ('slug_name',)

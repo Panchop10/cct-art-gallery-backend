@@ -23,3 +23,5 @@ class ArtistModelSerializer(serializers.ModelSerializer):
             'biography',
             'photo',
         )
+
+        read_only_fields = ('slug_name',)

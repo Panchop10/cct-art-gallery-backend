@@ -9,12 +9,33 @@ from cctart.art_pieces.models import ArtPieceDetail
 from cctart.art_pieces.models import ArtPieceTag
 from cctart.artists.models import Artist
 from cctart.categories.models import Category
+from cctart.events.models import Event
 
 # Serializers
 from cctart.art_pieces.serializers.details import ArtPieceDetailModelSerializer
 from cctart.art_pieces.serializers.tags import ArtPieceTagModelSerializer
 from cctart.categories.serializers import CategoryModelSerializer
 from cctart.artists.serializers import ArtistModelSerializer
+
+class SingleEventModelSerializer(serializers.ModelSerializer):
+    """Single event model serializer."""
+
+
+    class Meta:
+        """Meta class."""
+
+        model = Event
+        fields = (
+            'slug_name',
+            'name',
+            'date',
+            'description',
+            'location',
+            'photo',
+            'finished',
+        )
+
+        read_only_fields = ('slug_name',)
 
 class ArtPieceModelSerializer(serializers.ModelSerializer):
     """Art Piece model serializer."""
@@ -24,6 +45,7 @@ class ArtPieceModelSerializer(serializers.ModelSerializer):
 
     details = ArtPieceDetailModelSerializer(many=True)
     tags = ArtPieceTagModelSerializer(many=True)
+    events = serializers.SerializerMethodField()
 
     class Meta:
         """Meta class."""
@@ -43,8 +65,15 @@ class ArtPieceModelSerializer(serializers.ModelSerializer):
             'likes',
             'events'
         )
+        depth = 1
 
         read_only_fields = ('slug_name', 'likes', 'events')
+
+    def get_events(self, obj):
+        events = Event.objects.filter(artpieces=obj, deleted=False)
+        serializer = SingleEventModelSerializer(instance=events, many=True)
+        return serializer.data
+
 
 class AddArtPieceModelSerializer(serializers.ModelSerializer):
     """Add Art Piece model serializer."""
@@ -130,7 +159,7 @@ class UpdateArtPieceModelSerializer(serializers.ModelSerializer):
     def update(self, instance, data):
         """Update art pieces."""
         art_piece = instance
-        
+
         if 'details' in data:
             details_data = data.pop('details')
             for detail_data in details_data:
