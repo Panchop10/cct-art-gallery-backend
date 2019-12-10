@@ -49,5 +49,12 @@ urlpatterns = [
             namespace='events'
         )
     ),
+    path(
+        '',
+        include(
+            ('cctart.users.urls', 'users'),
+            namespace='users'
+        )
+    ),
 
 ]

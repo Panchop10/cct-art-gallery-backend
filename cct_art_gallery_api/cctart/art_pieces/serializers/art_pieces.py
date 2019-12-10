@@ -10,6 +10,7 @@ from cctart.art_pieces.models import ArtPieceTag
 from cctart.artists.models import Artist
 from cctart.categories.models import Category
 from cctart.events.models import Event
+from cctart.users.models import User
 
 # Serializers
 from cctart.art_pieces.serializers.details import ArtPieceDetailModelSerializer
@@ -37,6 +38,22 @@ class SingleEventModelSerializer(serializers.ModelSerializer):
 
         read_only_fields = ('slug_name',)
 
+class SingleUserModelSerializer(serializers.ModelSerializer):
+    """Single user model serializer."""
+
+    class Meta:
+        """Meta class."""
+
+        model = User
+        fields = (
+            'username',
+            'first_name',
+            'last_name',
+            'photo'
+        )
+
+        read_only_fields = ('username',)
+
 class ArtPieceModelSerializer(serializers.ModelSerializer):
     """Art Piece model serializer."""
 
@@ -46,6 +63,7 @@ class ArtPieceModelSerializer(serializers.ModelSerializer):
     details = ArtPieceDetailModelSerializer(many=True)
     tags = ArtPieceTagModelSerializer(many=True)
     events = serializers.SerializerMethodField()
+    likes = serializers.SerializerMethodField()
 
     class Meta:
         """Meta class."""
@@ -72,6 +90,11 @@ class ArtPieceModelSerializer(serializers.ModelSerializer):
     def get_events(self, obj):
         events = Event.objects.filter(artpieces=obj, deleted=False)
         serializer = SingleEventModelSerializer(instance=events, many=True)
+        return serializer.data
+
+    def get_likes(self, obj):
+        users = User.objects.filter(artpieces=obj, is_verified=True)
+        serializer = SingleUserModelSerializer(instance=users, many=True)
         return serializer.data
 
 

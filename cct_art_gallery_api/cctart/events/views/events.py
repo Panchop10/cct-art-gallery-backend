@@ -23,7 +23,7 @@ class EventViewSet(mixins.CreateModelMixin,
                     mixins.ListModelMixin,
                     mixins.DestroyModelMixin,
                     viewsets.GenericViewSet):
-    """Category view set."""
+    """Event view set."""
 
     serializer_class = EventModelSerializer
     lookup_field = 'slug_name'
