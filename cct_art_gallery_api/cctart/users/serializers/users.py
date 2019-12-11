@@ -6,10 +6,34 @@ from rest_framework import serializers
 # Models
 from cctart.users.models import User
 from cctart.art_pieces.models import ArtPiece
+from cctart.orders.models import Order
 
 # Serializers
 from cctart.categories.serializers import CategoryModelSerializer
 from cctart.artists.serializers import ArtistModelSerializer
+
+
+class SingleArtPieceModelSerializer(serializers.ModelSerializer):
+    """Single Art Piece model serializer."""
+
+    category = CategoryModelSerializer(many=False)
+    artist = ArtistModelSerializer(many=False)
+
+    class Meta:
+        """Meta class."""
+
+        model = ArtPiece
+        fields = (
+            'slug_name',
+            'name',
+            'description',
+            'price',
+            'photo',
+            'artist',
+            'category'
+        )
+
+        read_only_fields = ('slug_name',)
 
 
 class UserModelSerializer(serializers.ModelSerializer):
@@ -53,6 +77,23 @@ class UserLikesViewSet(serializers.ModelSerializer):
             'category'
         )
 
+class UserOrdersViewSet(serializers.ModelSerializer):
+    """User Orders model serializer."""
+
+    artpieces = SingleArtPieceModelSerializer(many=True)
+
+    class Meta:
+        """Meta class."""
+
+        model = Order
+        fields = (
+            'pk',
+            'date',
+            'total',
+            'payment_method',
+            'delivered',
+            'artpieces'
+        )
 
 class AddUserLikesViewSet(serializers.ModelSerializer):
     """User Likes model serializer."""

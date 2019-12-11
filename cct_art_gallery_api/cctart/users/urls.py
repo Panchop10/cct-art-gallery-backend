@@ -16,6 +16,11 @@ router.register(
     users_views.UserLikesViewSet,
     basename='likes'
 )
+router.register(
+    r'users/(?P<username>[-a-zA-Z0-9_]+)/orders',
+    users_views.UserOrderViewSet,
+    basename='orders'
+)
 
 urlpatterns = [
     path('', include(router.urls))

@@ -9,15 +9,15 @@ from rest_framework.generics import get_object_or_404
 from cctart.users.serializers import (
     UserModelSerializer,
     UserLikesViewSet,
-    AddUserLikesViewSet
+    AddUserLikesViewSet,
+    UserOrdersViewSet
 )
 
 # Models
 from cctart.users.models import User
 from cctart.art_pieces.models import ArtPiece
 
-class UserViewSet(mixins.CreateModelMixin,
-                    mixins.RetrieveModelMixin,
+class UserViewSet(mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.ListModelMixin,
                     mixins.DestroyModelMixin,
@@ -77,3 +77,24 @@ class UserLikesViewSet(mixins.CreateModelMixin,
         artpiece = serializer.save()
         data = self.get_serializer(artpiece).data
         return Response(data, status=status.HTTP_201_CREATED)
+
+class UserOrderViewSet(mixins.RetrieveModelMixin,
+                    mixins.ListModelMixin,
+                    viewsets.GenericViewSet):
+    """User Order view set."""
+
+    serializer_class = UserOrdersViewSet
+    lookup_field = "pk"
+
+    def dispatch(self, request, *args, **kwargs):
+        """Verify that the user exists."""
+        username = kwargs['username']
+        self.user = get_object_or_404(
+            User,
+            username=username
+        )
+        return super(UserOrderViewSet, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        """Restrict list to orders included in the instance user."""
+        return self.user.orders.all()

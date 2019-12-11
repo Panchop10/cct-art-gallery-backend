@@ -30,4 +30,4 @@ class Order(CCTArtGalleryModel):
 
     def __str__(self):
         """Return order"""
-        return self.user + ": €" + self.total + " at: " + self.total
+        return self.user.username + ": €" + self.total + " at: " + self.date

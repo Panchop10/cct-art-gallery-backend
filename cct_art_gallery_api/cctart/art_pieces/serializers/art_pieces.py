@@ -11,6 +11,7 @@ from cctart.artists.models import Artist
 from cctart.categories.models import Category
 from cctart.events.models import Event
 from cctart.users.models import User
+from cctart.orders.models import Order
 
 # Serializers
 from cctart.art_pieces.serializers.details import ArtPieceDetailModelSerializer
@@ -54,11 +55,33 @@ class SingleUserModelSerializer(serializers.ModelSerializer):
 
         read_only_fields = ('username',)
 
+
+class SingleOrderModelSerializer(serializers.ModelSerializer):
+    """Single order model serializer."""
+
+    user = SingleUserModelSerializer(many=False)
+
+    class Meta:
+        """Meta class."""
+
+        model = Order
+        fields = (
+            'pk',
+            'user',
+            'date',
+            'total',
+            'payment_method',
+            'delivered',
+        )
+
+        read_only_fields = ('user',)
+
 class ArtPieceModelSerializer(serializers.ModelSerializer):
     """Art Piece model serializer."""
 
     category = CategoryModelSerializer(many=False)
     artist = ArtistModelSerializer(many=False)
+    order = SingleOrderModelSerializer(many=False)
 
     details = ArtPieceDetailModelSerializer(many=True)
     tags = ArtPieceTagModelSerializer(many=True)
@@ -93,7 +116,7 @@ class ArtPieceModelSerializer(serializers.ModelSerializer):
         return serializer.data
 
     def get_likes(self, obj):
-        users = User.objects.filter(artpieces=obj, is_verified=True)
+        users = User.objects.filter(artpieces=obj)
         serializer = SingleUserModelSerializer(instance=users, many=True)
         return serializer.data
 

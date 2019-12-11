@@ -56,5 +56,12 @@ urlpatterns = [
             namespace='users'
         )
     ),
+    path(
+        '',
+        include(
+            ('cctart.orders.urls', 'orders'),
+            namespace='orders'
+        )
+    ),
 
 ]
