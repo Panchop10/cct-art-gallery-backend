@@ -1,16 +1,28 @@
-"""Categories views."""
+"""Users views."""
 
 # Django REST Framework
 from rest_framework import viewsets, mixins, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
+
+# Permissions
+from cctart.users.permissions import (
+    IsAdmin,
+    IsAccountOwner,
+)
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated,
+)
 
 # Serializers
 from cctart.users.serializers import (
     UserModelSerializer,
     UserLikesViewSet,
     AddUserLikesViewSet,
-    UserOrdersViewSet
+    UserOrdersViewSet,
+    UserSignUpModelSerializer
 )
 
 # Models
@@ -27,6 +39,18 @@ class UserViewSet(mixins.RetrieveModelMixin,
     serializer_class = UserModelSerializer
     lookup_field = 'username'
 
+    def get_permissions(self):
+        """Assign permissions based on action."""
+        if self.action in ['signup']:
+            permissions = [AllowAny]
+        elif self.action in ['list', 'destroy', 'admin']:
+            permissions = [IsAuthenticated, IsAdmin]
+        elif self.action in ['retrieve']:
+            permissions = [IsAuthenticated, IsAccountOwner]
+        else:
+            permissions = [IsAuthenticated]
+        return [p() for p in permissions]
+
     def get_queryset(self):
         """Restrict list to verified users."""
 
@@ -34,6 +58,30 @@ class UserViewSet(mixins.RetrieveModelMixin,
         if self.action == 'list':
             return queryset.filter(is_verified=True)
         return queryset
+
+    @action(detail=False, methods=['post'])
+    def signup(self, request):
+        """User sign up."""
+        serializer = UserSignUpModelSerializer(
+            data=request.data,
+            context={'admin': False}
+        )
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        data = UserModelSerializer(user).data
+        return Response(data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['post'])
+    def admin(self, request):
+        """User sign up."""
+        serializer = UserSignUpModelSerializer(
+            data=request.data,
+            context={'admin': True}
+        )
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        data = UserModelSerializer(user).data
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
 class UserLikesViewSet(mixins.CreateModelMixin,

@@ -1,5 +1,8 @@
 """User serializer."""
 
+# Django
+from django.contrib.auth import password_validation
+
 # Django REST Framework
 from rest_framework import serializers
 
@@ -119,3 +122,47 @@ class AddUserLikesViewSet(serializers.ModelSerializer):
         user.save()
 
         return artpiece
+
+
+class UserSignUpModelSerializer(serializers.ModelSerializer):
+    """User sign up serializer.
+
+    Handle sign up data validation and user creation
+    """
+
+    password_confirmation = serializers.CharField(min_length=8)
+
+    class Meta:
+        """Meta class."""
+
+        model = User
+        fields = (
+            'username',
+            'password',
+            'password_confirmation',
+            'first_name',
+            'last_name',
+            'email',
+            'address',
+            'photo',
+            'last_login'
+        )
+
+    def validate(self, data):
+        """Verify passwords match."""
+        passwd = data['password']
+        passwd_conf = data['password_confirmation']
+        if passwd != passwd_conf:
+            raise serializers.ValidationError("Passwords don't match.")
+        password_validation.validate_password(passwd)
+        return data
+
+    def create(self, data):
+        """Handle user and profile creation."""
+        data.pop('password_confirmation')
+        user = User.objects.create_user(
+            **data,
+            is_verified=True,
+            is_admin=self.context['admin']
+        )
+        return user
