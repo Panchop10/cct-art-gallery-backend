@@ -19,17 +19,17 @@ from django.contrib import admin
 from django.urls import path, include
 
 # Django REST Framework
-from rest_framework_simplejwt.views import (
-    TokenRefreshView,
-    TokenObtainPairView
-)
+from rest_framework_simplejwt.views import TokenRefreshView
+
+# Custom Token
+from config.customtoken import CustomTokenObtainPairView
 
 urlpatterns = [
     # Django Admin
     path('admin/', admin.site.urls),
 
     # Django REST Framework
-    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     # Apps
