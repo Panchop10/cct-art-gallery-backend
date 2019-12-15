@@ -12,6 +12,7 @@ djangorestframework-simplejwt = "*"
 ipdb = "*"
 requests = "*"
 django-cors-headers = "*"
+pymysql = "*"
 
 [dev-packages]
 jupyter = "*"

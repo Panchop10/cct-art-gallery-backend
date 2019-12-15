@@ -22,7 +22,6 @@ from cctart.artists.serializers import ArtistModelSerializer
 class SingleEventModelSerializer(serializers.ModelSerializer):
     """Single event model serializer."""
 
-
     class Meta:
         """Meta class."""
 
@@ -157,6 +156,10 @@ class AddArtPieceModelSerializer(serializers.ModelSerializer):
 
         details_data = data.pop('details')
         tags_data = data.pop('tags')
+        try:
+            data['photo'] = self.context['request'].data['photo']
+        except:
+            pass
 
         art_piece = ArtPiece.objects.create(**data)
 

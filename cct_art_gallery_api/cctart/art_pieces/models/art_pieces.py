@@ -55,7 +55,7 @@ class ArtPiece(CCTArtGalleryModel):
 
     photo = models.ImageField(
         'profile picture',
-        upload_to='img/art_pieces/pictures/',
+        upload_to='art_pieces/pictures/',
         blank=True,
         null=True
     )
