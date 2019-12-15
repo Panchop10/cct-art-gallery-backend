@@ -21,6 +21,9 @@ from cctart.art_pieces.models import (
     ArtPieceTag
 )
 
+# Utilities
+import json
+
 class ArtPieceViewSet(mixins.CreateModelMixin,
                     mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
@@ -48,7 +51,7 @@ class ArtPieceViewSet(mixins.CreateModelMixin,
     def create(self, request, *args, **kwargs):
         """Handle art pieces creation with details and tags."""
         serializer = AddArtPieceModelSerializer(
-            data=request.data,
+            data=json.loads(request.data['data']),
             context={'request': request}
         )
         serializer.is_valid(raise_exception=True)

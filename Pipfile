@@ -8,6 +8,7 @@ djangorestframework = "*"
 django = "*"
 mysqlclient = "*"
 pillow = "*"
+pymysql = "*"
 
 [dev-packages]
 jupyter = "*"
