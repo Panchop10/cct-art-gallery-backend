@@ -25,3 +25,14 @@ class ArtistModelSerializer(serializers.ModelSerializer):
         )
 
         read_only_fields = ('slug_name',)
+
+    def create(self, data):
+        """Create artist."""
+        try:
+            data['photo'] = self.context['request'].data['photo']
+        except:
+            pass
+
+        artist = Artist.objects.create(**data)
+
+        return artist

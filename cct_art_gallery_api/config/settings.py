@@ -25,7 +25,7 @@ SECRET_KEY = 'nf+rc=rx9-+62elp8kr!fk!p3)6ip357*zm3oq-owbrdp*vw5a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-CORS_ORIGIN_ALLOW_ALL = DEBUG
+CORS_ORIGIN_ALLOW_ALL = True
 
 ALLOWED_HOSTS = []
 
@@ -49,6 +49,7 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'django_extensions',
     'corsheaders',
+    'django_filters',
 ]
 LOCAL_APPS = [
     'cctart.users.apps.UsersConfig',
@@ -105,10 +106,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'cct_gallery_art',
-        'USER': 'django_rest_framework',
+        #'NAME': 'cct_gallery_art',
+        #'USER': 'django_rest_framework',
+        #'PASSWORD': 'pass1234!',
+        #'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        'NAME': 'francisco_2018260',
+        'USER': 'francisco_2018260',
         'PASSWORD': 'pass1234!',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        'HOST': 'database-1.cptrcvahtkfl.eu-west-1.rds.amazonaws.com',   # Or an IP Address that your DB is hosted on
         'PORT': '3306',
     }
 }
@@ -168,7 +173,10 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ]
 }
 
 SIMPLE_JWT = {

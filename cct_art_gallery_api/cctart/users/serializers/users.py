@@ -42,7 +42,6 @@ class SingleArtPieceModelSerializer(serializers.ModelSerializer):
 class UserModelSerializer(serializers.ModelSerializer):
     """User model serializer."""
 
-
     class Meta:
         """Meta class."""
 
@@ -59,6 +58,19 @@ class UserModelSerializer(serializers.ModelSerializer):
         )
 
         read_only = ('is_admin', 'last_login', 'username')
+
+    def update(self, instance, data):
+        """Update users"""
+        user = instance
+
+        try:
+            user.photo = self.context['request'].data['photo']
+        except:
+            pass
+
+        user.save()
+
+        return super(UserModelSerializer, self).update(instance, data)
 
 class UserLikesViewSet(serializers.ModelSerializer):
     """User Likes model serializer."""

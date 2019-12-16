@@ -14,11 +14,25 @@ from cctart.art_pieces.serializers import (
     ArtPieceTagModelSerializer,
 )
 
+# Filters
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
+
 # Models
 from cctart.art_pieces.models import (
     ArtPiece,
     ArtPieceDetail,
     ArtPieceTag
+)
+
+# Permissions
+from cctart.users.permissions import (
+    IsAdmin,
+    IsAccountOwner,
+)
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated,
 )
 
 # Utilities
@@ -35,6 +49,16 @@ class ArtPieceViewSet(mixins.CreateModelMixin,
     serializer_class = ArtPieceModelSerializer
     lookup_field = 'slug_name'
 
+    # Filters
+    filter_backends = (SearchFilter, OrderingFilter, DjangoFilterBackend)
+    search_fields = ['name']
+    ordering_fields = [
+        'price',
+        'name',
+    ]
+    # ordering = ['likes__count']
+    filter_fields = ['name', 'price']
+
     def get_queryset(self):
         """Restrict list to active-only."""
 
@@ -42,6 +66,16 @@ class ArtPieceViewSet(mixins.CreateModelMixin,
         if self.action == 'list':
             return queryset.filter(deleted=False)
         return queryset
+
+    def get_permissions(self):
+        """Assign permissions based on action."""
+        if self.action in ['list', 'retrieve']:
+            permissions = [AllowAny]
+        elif self.action in ['destroy']:
+            permissions = [IsAuthenticated, IsAdmin]
+        else:
+            permissions = [IsAuthenticated]
+        return [p() for p in permissions]
 
     def perform_destroy(self, instance):
         """Disable artist."""
@@ -66,7 +100,7 @@ class ArtPieceViewSet(mixins.CreateModelMixin,
         instance = self.get_object()
         serializer = UpdateArtPieceModelSerializer(
             instance,
-            data=request.data,
+            data=json.loads(request.data['data']),
             partial=partial
         )
         serializer.is_valid(raise_exception=True)

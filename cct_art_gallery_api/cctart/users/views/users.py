@@ -25,9 +25,16 @@ from cctart.users.serializers import (
     UserSignUpModelSerializer
 )
 
+# Filters
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
+
 # Models
 from cctart.users.models import User
 from cctart.art_pieces.models import ArtPiece
+
+# Utilities
+import json
 
 class UserViewSet(mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
@@ -38,6 +45,13 @@ class UserViewSet(mixins.RetrieveModelMixin,
 
     serializer_class = UserModelSerializer
     lookup_field = 'username'
+
+    # Filters
+    filter_backends = (SearchFilter, OrderingFilter, DjangoFilterBackend)
+    search_fields = ['username', 'is_admin']
+
+    # ordering = ['likes__count']
+    filter_fields = ['username', 'is_admin']
 
     def get_permissions(self):
         """Assign permissions based on action."""
@@ -58,6 +72,22 @@ class UserViewSet(mixins.RetrieveModelMixin,
         if self.action == 'list':
             return queryset.filter(is_verified=True)
         return queryset
+
+    def update(self, request, *args, **kwargs):
+        """Handle update users."""
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = UserModelSerializer(
+            instance,
+            data=json.loads(request.data['data']),
+            context={'request': request},
+            partial=partial
+        )
+        serializer.is_valid(raise_exception=True)
+        artist = serializer.save()
+
+        data = self.get_serializer(artist).data
+        return Response(data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['post'])
     def signup(self, request):
@@ -103,7 +133,6 @@ class UserLikesViewSet(mixins.CreateModelMixin,
         )
         return super(UserLikesViewSet, self).dispatch(request, *args, **kwargs)
 
-
     def get_queryset(self):
         """Restrict list to artpieces included in the instance user."""
         return self.user.artpieces.all()
@@ -125,6 +154,7 @@ class UserLikesViewSet(mixins.CreateModelMixin,
         artpiece = serializer.save()
         data = self.get_serializer(artpiece).data
         return Response(data, status=status.HTTP_201_CREATED)
+
 
 class UserOrderViewSet(mixins.RetrieveModelMixin,
                     mixins.ListModelMixin,
