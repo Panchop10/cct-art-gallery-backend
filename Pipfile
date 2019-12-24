@@ -13,6 +13,7 @@ ipdb = "*"
 requests = "*"
 django-cors-headers = "*"
 pymysql = "*"
+django-extensions = "*"
 django_filters = "*"
 
 [dev-packages]
