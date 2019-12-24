@@ -6,13 +6,14 @@ name = "pypi"
 [packages]
 djangorestframework = "*"
 django = "*"
-mysqlclient = "*"
+#mysqlclient = "*"
 pillow = "*"
 djangorestframework-simplejwt = "*"
 ipdb = "*"
 requests = "*"
 django-cors-headers = "*"
 pymysql = "*"
+django_filters = "*"
 
 [dev-packages]
 jupyter = "*"
